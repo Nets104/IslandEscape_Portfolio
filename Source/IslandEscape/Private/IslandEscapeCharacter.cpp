@@ -953,6 +953,98 @@ bool AIslandEscapeCharacter::FindBestInteractableHit(float MaxDistance, FHitResu
 	return bFoundCandidate;
 }
 
+bool AIslandEscapeCharacter::FindBestVineHit(float MaxDistance, FHitResult& OutHit) const
+{
+	if (!GetWorld() || !FollowCamera)
+	{
+		return false;
+	}
+
+	const FVector Start = FollowCamera->GetComponentLocation();
+	const FVector Forward = FollowCamera->GetForwardVector();
+	const FVector End = Start + Forward * MaxDistance;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	const auto IsVineHit = [](const FHitResult& Hit)
+	{
+		const UInstancedStaticMeshComponent* ISM = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+		return ISM && Hit.Item != INDEX_NONE && ISM->ComponentTags.Contains(IslandFoliageTags::VineFoliage);
+	};
+
+	// 정조준 우선 — 중앙에 덩굴이 맞으면 보정 없이 그 인스턴스를 쓴다.
+	FHitResult CenterHit;
+	if (GetWorld()->LineTraceSingleByChannel(CenterHit, Start, End, ECC_Visibility, Params)
+		&& IsVineHit(CenterHit))
+	{
+		OutHit = CenterHit;
+		return true;
+	}
+
+	const float AssistRadius = FMath::Max(0.f, VineAssistRadius);
+	if (AssistRadius <= KINDA_SMALL_NUMBER)
+	{
+		return false;
+	}
+
+	TArray<FHitResult> SweepHits;
+	GetWorld()->SweepMultiByChannel(
+		SweepHits,
+		Start,
+		End,
+		FQuat::Identity,
+		ECC_Visibility,
+		FCollisionShape::MakeSphere(AssistRadius),
+		Params);
+
+	bool bFoundCandidate = false;
+	float BestScore = TNumericLimits<float>::Max();
+
+	for (const FHitResult& Hit : SweepHits)
+	{
+		if (!IsVineHit(Hit))
+		{
+			continue;
+		}
+
+		FVector CandidatePoint = Hit.ImpactPoint;
+		if (CandidatePoint.IsNearlyZero())
+		{
+			CandidatePoint = Hit.Location;
+		}
+
+		const FVector ToCandidate = CandidatePoint - Start;
+		const float ForwardDistance = FVector::DotProduct(ToCandidate, Forward);
+		if (ForwardDistance < 0.f || ForwardDistance > MaxDistance)
+		{
+			continue;
+		}
+
+		// 채집하면 그 인스턴스가 사라지므로 차폐 검사를 인스턴스 단위로 한다 —
+		// 다른 덩굴/지형에 가린 후보를 고르면 "보고 있는 것과 다른 덩굴이 사라지는" 오조작이 된다.
+		FHitResult SightHit;
+		if (GetWorld()->LineTraceSingleByChannel(SightHit, Start, CandidatePoint, ECC_Visibility, Params)
+			&& (SightHit.GetComponent() != Hit.GetComponent() || SightHit.Item != Hit.Item))
+		{
+			continue;
+		}
+
+		const float DistanceSquared = ToCandidate.SizeSquared();
+		const float CenterOffsetSquared = FMath::Max(0.f, DistanceSquared - FMath::Square(ForwardDistance));
+		const float Score = CenterOffsetSquared + FMath::Square(ForwardDistance * 0.05f);
+
+		if (Score < BestScore)
+		{
+			BestScore = Score;
+			OutHit = Hit;
+			bFoundCandidate = true;
+		}
+	}
+
+	return bFoundCandidate;
+}
+
 void AIslandEscapeCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -1097,13 +1189,13 @@ void AIslandEscapeCharacter::Tick(float DeltaTime)
 	UInstancedStaticMeshComponent* ISM = nullptr;
 	if (!bHasInteractHit)
 	{
-		FHitResult FoliageHit;
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(this);
-		GetWorld()->LineTraceSingleByChannel(FoliageHit, Start, Start + Forward * InteractDistance, ECC_Visibility, Params);
-		Hit = FoliageHit;
-		HitActor = Hit.GetActor();
-		ISM = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+		FHitResult VineHit;
+		if (FindBestVineHit(InteractDistance, VineHit))
+		{
+			Hit = VineHit;
+			HitActor = Hit.GetActor();
+			ISM = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+		}
 	}
 
 	// 장거리 응시는 대사 전용이며 F키 상호작용 대상과 분리한다.
@@ -1374,33 +1466,14 @@ void AIslandEscapeCharacter::Interact()
 		return;
 	}
 
-	FVector Start = FollowCamera->GetComponentLocation();
-	FVector End = Start + (FollowCamera->GetForwardVector() * InteractDistance);
-
+	// Tick UI 판정과 같은 함수를 써서 화면에 뜬 덩굴과 실제 채집 인스턴스가 어긋나지 않게 한다.
 	FHitResult Hit;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		Hit,
-		Start,
-		End,
-		ECC_Visibility,
-		Params
-	);
-
-	if (!bHit) return;
+	if (!FindBestVineHit(InteractDistance, Hit))
+	{
+		return;
+	}
 
 	float Distance = FVector::Dist(GetActorLocation(), Hit.Location);
-
-	UInstancedStaticMeshComponent* ISM =
-		Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
-
-	if (!ISM) return;
-
-	if (!ISM->ComponentTags.Contains(IslandFoliageTags::VineFoliage))
-		return;
-
 	if (Distance > InteractDistance)
 	{
 		return;

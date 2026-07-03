@@ -329,6 +329,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (ClampMin = "0.0", ClampMax = "200.0"))
 	float InteractAssistRadius = 70.f;
 
+	// 덩굴 채집 전용 보조 반경. 덩굴은 인스턴스 단위로 사라지므로 상호작용 보정보다 좁게 잡는다. 0이면 정중앙 판정만 사용.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (ClampMin = "0.0", ClampMax = "200.0"))
+	float VineAssistRadius = 40.f;
+
 	// 바다 근처면 바닷물 채집, 그 외에는 상호작용 대상에 위임
 	UFUNCTION() void Interact();
 
@@ -339,6 +343,9 @@ public:
 	UPROPERTY() AActor* CurrentFarGazeActor = nullptr;
 
 	bool FindBestInteractableHit(float MaxDistance, FHitResult& OutHit) const;
+
+	// 덩굴(ISM) 전용 조준 보정 — Tick UI 표시와 F키 채집이 같은 인스턴스를 고르도록 공용으로 쓴다.
+	bool FindBestVineHit(float MaxDistance, FHitResult& OutHit) const;
 
 public:
 	void SetNearOcean(bool bInNearOcean);
