@@ -219,8 +219,6 @@ void AWorldItem::ActivateDropPhysics()
 	Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_SoftCollision, ECR_Ignore);
-	Mesh->SetCollisionResponseToChannel(ECC_Tiger, ECR_Ignore);
-	Mesh->SetCollisionResponseToChannel(ECC_Enemy, ECR_Ignore);
 	Mesh->CanCharacterStepUpOn = ECB_No;
 
 	// 루트(QueryOnly Sphere)에 weld되면 "물리 시뮬레이션 + QueryOnly 콜리전" 비호환 경고가 나고
@@ -428,8 +426,6 @@ void AWorldItem::ApplyWorldItemCollisionSettings()
 		Collision->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 		Collision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		Collision->SetCollisionResponseToChannel(ECC_SoftCollision, ECR_Ignore);
-		Collision->SetCollisionResponseToChannel(ECC_Tiger, ECR_Ignore);
-		Collision->SetCollisionResponseToChannel(ECC_Enemy, ECR_Ignore);
 		Collision->CanCharacterStepUpOn = ECB_No;
 	}
 
@@ -439,8 +435,6 @@ void AWorldItem::ApplyWorldItemCollisionSettings()
 		Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 		Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		Mesh->SetCollisionResponseToChannel(ECC_SoftCollision, ECR_Ignore);
-		Mesh->SetCollisionResponseToChannel(ECC_Tiger, ECR_Ignore);
-		Mesh->SetCollisionResponseToChannel(ECC_Enemy, ECR_Ignore);
 		Mesh->CanCharacterStepUpOn = ECB_No;
 	}
 
@@ -457,8 +451,6 @@ void AWorldItem::ApplyWorldItemCollisionSettings()
 		PrimitiveComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 		PrimitiveComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		PrimitiveComponent->SetCollisionResponseToChannel(ECC_SoftCollision, ECR_Ignore);
-		PrimitiveComponent->SetCollisionResponseToChannel(ECC_Tiger, ECR_Ignore);
-		PrimitiveComponent->SetCollisionResponseToChannel(ECC_Enemy, ECR_Ignore);
 		PrimitiveComponent->CanCharacterStepUpOn = ECB_No;
 	}
 }

@@ -30,7 +30,7 @@ public:
     UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional))
     UTextBlock* ItemNameText;
 
-    // 요리 결과 이름 텍스트 — "→ RoastChicken" (에디터 이름: ResultNameText)
+    // 요리 결과 이름 텍스트 (에디터 이름: ResultNameText)
     UPROPERTY(BlueprintReadWrite, meta = (BindWidgetOptional))
     UTextBlock* ResultNameText;
 

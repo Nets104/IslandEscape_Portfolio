@@ -1,6 +1,5 @@
 // IslandEscapeCharacter portfolio excerpts
-// Full AIslandEscapeCharacter also contains unrelated combat/AI/game-flow code.
-// This file keeps only the functions referenced by the IslandEscape portfolio PDF.
+// This file keeps only the character functions referenced by the IslandEscape portfolio PDF.
 
 bool AIslandEscapeCharacter::FindBestInteractableHit(float MaxDistance, FHitResult& OutHit) const
 {
