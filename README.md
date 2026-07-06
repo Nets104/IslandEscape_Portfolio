@@ -1,8 +1,8 @@
 # IslandEscape Portfolio Source
 
-김서현 포트폴리오 PDF `Portfolio_KimSeohyun_IslandEscape.pdf`에 나온 기능을 설명하기 위한 선별 소스입니다.
+포트폴리오 `Portfolio_KimSeohyun_IslandEscape.pdf`에 나온 기능을 설명하기 위한 선별 소스입니다.
 
-이 저장소는 전체 Unreal 프로젝트가 아니라, 포트폴리오에 직접 등장하는 기능의 구현 근거만 모은 공개용 자료입니다. 따라서 팀원 담당 영역이나 PDF에서 설명하지 않은 AI/몬스터/보스 전투 소스는 포함하지 않습니다.
+이 저장소는 전체 Unreal 프로젝트가 아니라, 포트폴리오에 직접 등장하는 기능의 구현 근거만 모은 공개용 자료입니다. 
 
 ## Included Scope
 
