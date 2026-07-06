@@ -26,12 +26,6 @@
   - PDF 개요의 담당 기능 근거로 포함
   - `AShip`, `UShipRepairWidget`, `UShipEscapeConfirmWidget`
 
-## Not Included
-
-- Enemy / Boss / Tiger / Chicken 관련 소스
-- 전체 맵, 캐릭터, 애니메이션, 사운드, 대용량 Unreal `.uasset`
-- 전체 프로젝트 빌드에 필요한 모든 의존성
-
 ## Notes
 
 이 코드는 포트폴리오 검토자가 구현 구조와 문제 해결 방식을 확인하기 위한 자료입니다. 전체 게임 실행용 프로젝트는 별도 관리됩니다.
