@@ -1,25 +1,12 @@
-# Unreal generated files
-Binaries/
-DerivedDataCache/
-Intermediate/
-Saved/
-.vs/
-
-# Build artifacts
+/.vs/
+/Binaries/
+/DerivedDataCache/
+/Intermediate/
+/Saved/
+*.sln
+*.suo
+*.opensdf
+*.VC.db
 *.pdb
 *.obj
-*.log
-*.zip
-*.7z
-*.rar
-
-# IDE
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# OS
-Thumbs.db
-.DS_Store
-
+*.tmp
