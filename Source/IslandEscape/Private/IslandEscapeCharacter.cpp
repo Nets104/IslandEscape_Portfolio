@@ -708,11 +708,11 @@ void AIslandEscapeCharacter::BeginPlay()
 	}
 
 	// 기본 지급 아이템 (테스트 용)
-	//InventoryComponent->AddItem(IslandItemIDs::Wood, 30);
+	InventoryComponent->AddItem(IslandItemIDs::Wood, 30);
+	InventoryComponent->AddItem(IslandItemIDs::Stone, 10);
+	InventoryComponent->AddItem(IslandItemIDs::MetalRock, 5);
+	InventoryComponent->AddItem(IslandItemIDs::Vine, 20);
 	//InventoryComponent->AddItem(IslandItemIDs::TigerClaw, 1);
-	//InventoryComponent->AddItem(IslandItemIDs::Stone, 10);
-	//InventoryComponent->AddItem(IslandItemIDs::MetalRock, 5);
-	//InventoryComponent->AddItem(IslandItemIDs::Vine, 20);
 	//InventoryComponent->AddItem(IslandItemIDs::Evidence, 1);
 
 	if (HairUIFactory)
@@ -2794,9 +2794,11 @@ FName AIslandEscapeCharacter::GetSelectedFoodItemID() const
 	const FQuickSlotItem& SelectedItem = QuickSlotComponent->Slots[SelectedIndex];
 	if (SelectedItem.IsEmpty()) return NAME_None;
 
-	// 물병류(바닷물/식수/빈 병)는 음식이 아니다. DT에서 ItemType=Water라 음료로 잡히지만,
-	// 음식 소비 경로는 수량을 1 줄이고 0이 되면 슬롯을 통째로 비운다(물병이 사라짐).
-	// 물병은 반드시 DrinkBottle(내구도 기반)로만 처리해야 하므로 여기서 제외한다.
+	// 물병류(바닷물/식수/빈 병)는 DT상 ItemType=Water라 아래 음료 판정에 걸리지만 여기서 제외한다.
+	// 음식 소비 경로는 Quantity를 1 줄이고 0이 되면 슬롯을 비워 아이템을 삭제하는 반면,
+	// 식수 물병은 Durability를 1씩 소모하다 0이 되면 삭제가 아니라 빈 물병으로 교체돼야 하고,
+	// 바닷물은 마실 수 없음(힌트 표시), 빈 병은 무동작이어야 한다.
+	// 이 상태별 처리는 전부 DrinkBottle에만 있으므로 물병은 반드시 그 경로로만 보낸다.
 	if (IslandItemIDs::IsBottle(SelectedItem.ItemID)) return NAME_None;
 
 	if (!InventoryComponent) return NAME_None;
