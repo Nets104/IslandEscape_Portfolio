@@ -41,16 +41,19 @@ void UInventoryComponent::BeginPlay()
 	Inventory.SetNum(InventorySize);
 }
 
+// 지정 인벤토리 슬롯 데이터 반환
 FInventorySlot UInventoryComponent::GetSlotData(int32 Index) const
 {
 	return Inventory.IsValidIndex(Index) ? Inventory[Index] : FInventorySlot{};
 }
 
+// 지정 아이템 보유 여부 확인
 bool UInventoryComponent::HasItem(FName ItemID) const
 {
 	return GetInventoryItemCount(ItemID) > 0;
 }
 
+// 인벤토리 가득 참 여부 확인
 bool UInventoryComponent::IsFull() const
 {
 	for (const FInventorySlot& Slot : Inventory)
@@ -64,6 +67,7 @@ bool UInventoryComponent::IsFull() const
 	return true;
 }
 
+// 인벤토리 내 지정 아이템 총수량 반환
 int32 UInventoryComponent::GetInventoryItemCount(FName ItemID) const
 {
 	if (ItemID.IsNone())
@@ -83,11 +87,13 @@ int32 UInventoryComponent::GetInventoryItemCount(FName ItemID) const
 	return Total;
 }
 
+// 호환용 인벤토리 아이템 총수량 반환
 int32 UInventoryComponent::GetTotalItemCount(FName ItemID) const
 {
 	return GetInventoryItemCount(ItemID);
 }
 
+// 지정 인벤토리 슬롯 데이터 교체
 void UInventoryComponent::SetSlotData(int32 Index, const FInventorySlot& Data)
 {
 	if (!Inventory.IsValidIndex(Index))
@@ -99,6 +105,7 @@ void UInventoryComponent::SetSlotData(int32 Index, const FInventorySlot& Data)
 	Broadcast();
 }
 
+// 지정 인벤토리 슬롯 초기화
 void UInventoryComponent::ClearSlot(int32 Index)
 {
 	if (!Inventory.IsValidIndex(Index))
@@ -116,6 +123,7 @@ void UInventoryComponent::ClearSlot(int32 Index)
 	}
 }
 
+// 두 인벤토리 슬롯 데이터 교환
 void UInventoryComponent::SwapSlots(int32 A, int32 B)
 {
 	if (!Inventory.IsValidIndex(A) || !Inventory.IsValidIndex(B) || A == B)
@@ -127,6 +135,7 @@ void UInventoryComponent::SwapSlots(int32 A, int32 B)
 	Broadcast();
 }
 
+// 지정 아이템 내구도 설정
 bool UInventoryComponent::SetDurability(FName ItemID, float NewDurability)
 {
 	if (ItemID.IsNone())
@@ -147,6 +156,7 @@ bool UInventoryComponent::SetDurability(FName ItemID, float NewDurability)
 	return false;
 }
 
+// 인벤토리 슬롯 간 아이템 이동
 bool UInventoryComponent::MoveItem(EInventorySlotType FromType, int32 FromIndex, EInventorySlotType ToType, int32 ToIndex)
 {
 	if (FromType != EInventorySlotType::Inventory || ToType != EInventorySlotType::Inventory)
@@ -202,6 +212,7 @@ bool UInventoryComponent::MoveItem(EInventorySlotType FromType, int32 FromIndex,
 	return true;
 }
 
+// 아이템 추가 후 남은 수량 반환
 int32 UInventoryComponent::AddItem(FName ItemID, int32 Quantity, float Durability)
 {
 	if (ItemID.IsNone() || Quantity <= 0)
@@ -262,6 +273,7 @@ int32 UInventoryComponent::AddItem(FName ItemID, int32 Quantity, float Durabilit
 	return Added;
 }
 
+// 수량과 내구도를 포함한 아이템 인스턴스 추가
 int32 UInventoryComponent::AddItemInstance(const FItemInstance& ItemInstance)
 {
 	const int32 Added = AddItem(ItemInstance.ItemID, ItemInstance.Quantity, ItemInstance.Durability);
@@ -285,6 +297,7 @@ int32 UInventoryComponent::AddItemInstance(const FItemInstance& ItemInstance)
 	return Added;
 }
 
+// 지정 슬롯 아이템 요청 수량만큼 제거
 bool UInventoryComponent::RemoveItemAt(EInventorySlotType Type, int32 Index, int32 Quantity)
 {
 	if (Type != EInventorySlotType::Inventory || Quantity <= 0)
@@ -316,6 +329,7 @@ bool UInventoryComponent::RemoveItemAt(EInventorySlotType Type, int32 Index, int
 	return true;
 }
 
+// 지정 아이템 요청 수량만큼 제거
 bool UInventoryComponent::RemoveItem(FName ItemID, int32 Quantity)
 {
 	if (ItemID.IsNone() || Quantity <= 0)
@@ -362,6 +376,7 @@ bool UInventoryComponent::RemoveItem(FName ItemID, int32 Quantity)
 	return Remaining == 0;
 }
 
+// 슬롯 종류와 인덱스로 수정 가능한 슬롯 검색
 FInventorySlot* UInventoryComponent::GetSlotPtr(EInventorySlotType Type, int32 Index)
 {
 	if (Type != EInventorySlotType::Inventory || Index < 0)
@@ -372,6 +387,7 @@ FInventorySlot* UInventoryComponent::GetSlotPtr(EInventorySlotType Type, int32 I
 	return Inventory.IsValidIndex(Index) ? &Inventory[Index] : nullptr;
 }
 
+// 슬롯 종류와 인덱스로 읽기 전용 슬롯 검색
 const FInventorySlot* UInventoryComponent::GetSlotPtr(EInventorySlotType Type, int32 Index) const
 {
 	if (Type != EInventorySlotType::Inventory || Index < 0)
@@ -382,11 +398,13 @@ const FInventorySlot* UInventoryComponent::GetSlotPtr(EInventorySlotType Type, i
 	return Inventory.IsValidIndex(Index) ? &Inventory[Index] : nullptr;
 }
 
+// 두 슬롯의 스택 병합 가능 여부 확인
 bool UInventoryComponent::CanStack(const FInventorySlot& A, const FInventorySlot& B) const
 {
 	return !A.IsEmpty() && !B.IsEmpty() && A.ItemID == B.ItemID;
 }
 
+// 아이템 최대 스택 수 반환
 int32 UInventoryComponent::GetMaxStack(FName ItemID) const
 {
 	if (!ItemDataTable || ItemID.IsNone())
@@ -409,6 +427,7 @@ int32 UInventoryComponent::GetMaxStack(FName ItemID) const
 	return FMath::Max(1, ItemData->MaxStackSize);
 }
 
+// 지정 아이템 내구도 1 소모
 bool UInventoryComponent::UseDurability(FName ItemID)
 {
 	if (ItemID.IsNone())
@@ -444,6 +463,7 @@ bool UInventoryComponent::UseDurability(FName ItemID)
 	return false;
 }
 
+// 인벤토리 아이템 정렬
 void UInventoryComponent::SortInventory()
 {
 	auto SlotLess = [](const FInventorySlot& A, const FInventorySlot& B) -> bool
@@ -470,6 +490,7 @@ void UInventoryComponent::SortInventory()
 	Broadcast();
 }
 
+// 인벤토리 변경 델리게이트 호출
 void UInventoryComponent::Broadcast()
 {
 	OnInventoryChanged.Broadcast();

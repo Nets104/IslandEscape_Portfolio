@@ -42,8 +42,10 @@ namespace IslandItemIDs
 
     // 음식 (Food / Water 카테고리)
     inline const FName Apple                    = FName(TEXT("Apple"));
+    inline const FName RawChicken               = FName(TEXT("RawChicken"));
 
     // 특수 아이템 (Special 카테고리, MaxStack 1)
+    inline const FName TigerClaw                = FName(TEXT("TigerClaw"));
     inline const FName Evidence                 = FName(TEXT("Evidence"));
 
     // 분류 헬퍼

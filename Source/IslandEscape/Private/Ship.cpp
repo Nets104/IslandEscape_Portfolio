@@ -246,6 +246,7 @@ void AShip::Interact_Implementation(AActor* Interactor)
 	}
 }
 
+// 수리 완료 후 탈출 확인 위젯 표시
 void AShip::ShowEscapeConfirmation(AIslandEscapeCharacter* Player)
 {
 	if (!Player)
@@ -285,6 +286,7 @@ void AShip::ShowEscapeConfirmation(AIslandEscapeCharacter* Player)
 	PC->EnterUIOnlyInputMode(ShipEscapeConfirmWidgetInstance, true);
 }
 
+// 탈출 확인 위젯 종료 및 게임 입력 복원
 void AShip::CloseEscapeConfirmation(bool bRestoreGameInput)
 {
 	AIslandEscapePlayerController* PC = ShipEscapeConfirmWidgetInstance
@@ -308,6 +310,7 @@ void AShip::CloseEscapeConfirmation(bool bRestoreGameInput)
 	}
 }
 
+// 탈출 확인 버튼 입력 처리
 void AShip::HandleEscapeConfirmed()
 {
 	AIslandEscapeCharacter* Player = PendingEscapePlayer.Get();
@@ -315,11 +318,13 @@ void AShip::HandleEscapeConfirmed()
 	ExecuteEscape(Player);
 }
 
+// 탈출 취소 버튼 입력 처리
 void AShip::HandleEscapeCancelled()
 {
 	CloseEscapeConfirmation(true);
 }
 
+// 최종 탈출 및 게임 클리어 흐름 실행
 void AShip::ExecuteEscape(AIslandEscapeCharacter* Player)
 {
 	if (!Player || !bRepairComplete)
@@ -375,6 +380,7 @@ void AShip::CompleteRepair()
 	OnAllRepairCompleted.Broadcast(this);
 }
 
+// 배 수리 안내 메시지 표시
 void AShip::ShowHint(AIslandEscapeCharacter* Player, const FString& Message)
 {
 	if (Player)

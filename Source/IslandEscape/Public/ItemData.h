@@ -16,7 +16,7 @@ enum class EItemType : uint8
     Food,       // 음식 (식물성·생고기·익힌 고기) — 최대 스택 99
     Water,      // 식수 — 최대 스택 10
     Tool,       // 물병, 돌도끼, 강화도끼 — 스택 1, 삭제 불가
-    Special     // 증거품 등 중요 아이템 — 스택 1
+    Special     // 증거품, 호랑이 발톱 — 스택 1
 };
 
 
@@ -35,8 +35,22 @@ enum class EFoodCategory : uint8
 };
 
 /**
+ * 고기 원재료 종류 열거형
+ * 닭/돼지/곰 등 동물별 구분이 필요할 때 사용
+ */
+UENUM(BlueprintType)
+enum class EMeatType : uint8
+{
+    None,
+    Chicken,
+    Pork,
+    Bear,
+    Fish
+};
+
+/**
  * DataTable 행 구조체
- * Row Name = ItemID (예: "Wood", "StoneAxe", "Apple")
+ * Row Name = ItemID (예: "Wood", "StoneAxe", "Chicken")
  * 에디터에서 DT_ItemData 테이블에 행을 추가해 아이템 데이터를 관리한다
  * 코드 수정 없이 에디터에서 수치 조정 가능
  */
@@ -102,14 +116,19 @@ struct FItemData : public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     EFoodCategory FoodCategory = EFoodCategory::None;
 
+    // 동물 종류 구분 (닭/돼지/곰 등)
+    // 현재는 선택 사항이지만, 추후 개별 고기 아이템 확장 대비용
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    EMeatType MeatType = EMeatType::None;
+
     // 요리 결과 아이템 ID
-    // 예: RawFood -> CookedFood
+    // 예: RawChicken -> RostChicken
     // 요리 불가능한 아이템이면 None 유지
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FName CookResultID = NAME_None;
 
     // true면 획득 시 중앙 알림("{ItemName} 획득") 표시
-    // 증거품 같은 중요 아이템만 체크 (일반 아이템은 false)
+    // 증거품·호랑이 발톱 같은 중요 아이템만 체크 (일반 아이템은 false)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     bool bNotifyOnAcquire = false;
 

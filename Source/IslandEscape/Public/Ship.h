@@ -92,9 +92,13 @@ public:
 	FOnAllRepairCompleted OnAllRepairCompleted;
 
 	// IInteractableInterface
+	// 수리 UI 또는 탈출 확인 UI 표시
 	virtual void Interact_Implementation(AActor* Interactor) override;
+	// 현재 수리 상태의 상호작용 문구 반환
 	virtual FString GetInteractText_Implementation() const override;
+	// 배 응시 대사 요청
 	virtual void OnGazeBegin_Implementation(AActor* Gazer) override;
+	// 배 응시 상호작용 거리 반환
 	virtual float GetGazeDistance_Implementation() const override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -122,13 +126,18 @@ public:
 	USoundBase* StageAdvanceSound = nullptr;
 
 private:
+	// 수리 완료 후 탈출 확인 위젯 표시
 	void ShowEscapeConfirmation(AIslandEscapeCharacter* Player);
+	// 탈출 확인 위젯 종료 및 게임 입력 복원
 	void CloseEscapeConfirmation(bool bRestoreGameInput);
+	// 최종 탈출 및 게임 클리어 흐름 실행
 	void ExecuteEscape(AIslandEscapeCharacter* Player);
 
+	// 탈출 확인 버튼 입력 처리
 	UFUNCTION()
 	void HandleEscapeConfirmed();
 
+	// 탈출 취소 버튼 입력 처리
 	UFUNCTION()
 	void HandleEscapeCancelled();
 
@@ -138,10 +147,13 @@ private:
 	// 모든 단계 완료 후 메시와 상태를 최종 반영
 	void CompleteRepair();
 
+	// 현재 수리 단계 재료 보유 여부 확인
 	bool HasCurrentStageMaterials(AIslandEscapeCharacter* Player) const;
 
+	// 현재 수리 단계 재료 소모
 	void ConsumeCurrentStageMaterials(AIslandEscapeCharacter* Player);
 
+	// 배 수리 안내 메시지 표시
 	void ShowHint(AIslandEscapeCharacter* Player, const FString& Message);
 
 	UPROPERTY()
